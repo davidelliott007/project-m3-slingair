@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 let { flights } = require('./test-data/flightSeating');
 
-let confirmed_bookings;
+let confirmed_booking = [];
 
 const PORT = process.env.PORT || 8000;
 let url = require('url');
@@ -56,14 +56,19 @@ const renderSeatSelect = (req, res) =>
 }
 const renderConfirmed = (req, res) => 
 {
+  console.log("renderConfirmed");
     res.status(200).render('pages/confirmed');
 }
 
 const postConfirmedFlight = (req, res) => 
 { 
     console.log(req.body);
+    let confirmed = req.body;
 
-    res.status(201).send(201, {confirmed_data:req.body});
+    confirmed_booking.push(confirmed);
+    
+    res.status(201).send({confirmed_data:req.body})
+
 
     //.render('pages/confirmed');
 }
@@ -106,7 +111,7 @@ express()
   .get('/flights/:flightNumber', handleFlight)
   .get('/seat-select', renderSeatSelect)
   .get('/all-flights', returnAllFlights)
-  .get('/confirmed', renderConfirmed)
+  .get('/confirmed/:email/:givename/:selection/:surname', renderConfirmed)
   .post('/postConfirmedFlight', postConfirmedFlight)
 
   .use((req, res) => res.send('Not Found'))

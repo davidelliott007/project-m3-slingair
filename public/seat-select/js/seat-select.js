@@ -6,7 +6,7 @@ let flightbuttons = [];
 let flights =[]
 let current_seats = [];
 let current_flight_to_display = [];
-let confirmed_flight_info;
+let confirmed_flight_info = [];
 let selection = '';
 
 function loadUpFlightButtons()
@@ -30,22 +30,7 @@ function loadUpFlightButtons()
   });
 }
 
-
 loadUpFlightButtons();
-
-
-
-function postConfirmedData()
-{
-  let data = {element: "barium"};
-
-fetch("/postConfirmedFlight", {
-  method: "POST", 
-  body: JSON.stringify(data)
-}).then(res => {
-  console.log("Request complete! response:", res);
-});
-}
 
 const renderSeats = () => {
   document.querySelector('.form-container').style.display = 'block';
@@ -116,10 +101,6 @@ const toggleFormContent = (event) => {
 const handleConfirmSeat = (event) => {
   event.preventDefault();
 
-
-
-  
-  // TODO: everything in here!
   fetch('/postConfirmedFlight', {
     method: 'POST',
     body: JSON.stringify({
@@ -134,8 +115,25 @@ const handleConfirmSeat = (event) => {
     },
   })
   .then((res) => res.json())
-  .then((data) => console.log(data))
-};
+  .then((data) => {
+
+  let email_response = data.confirmed_data.email;
+  let givenName_response = data.confirmed_data.givenName;
+  let selection_response = data.confirmed_data.selection;
+  let surname_response = data.confirmed_data.surname;
+
+    console.log(window.location.host)
+
+    let host_area = "http://"+window.location.host+`/confirmed/${email_response}/${givenName_response}/${selection_response}/${surname_response}/`;
+  window.location.assign(host_area);
+  // fetch(`/confirmed/${email_response}/${givenName_response}/${selection_response}/${surname_response}/`)
+  
+})
+
+
+  // .get('/confirmed/:email/:givename/:selection/:surname', renderConfirmed)
+  }
+
 
 function flightClicked()
 {
