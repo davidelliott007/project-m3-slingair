@@ -3,7 +3,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
-const { flights } = require('./test-data/flightSeating');
+let { flights } = require('./test-data/flightSeating');
+
+let confirmed_bookings;
 
 const PORT = process.env.PORT || 8000;
 let url = require('url');
@@ -31,10 +33,6 @@ const handleFlight = (req, res) => {
 
     }
   }
-
-
-
-
   // console.log(flight_to_return);
   // console.log(flightObject);
   res.status(200).send({flight_to_return:flight_to_return});
@@ -52,13 +50,26 @@ const renderSeatSelect = (req, res) =>
   let allflightsWithLinks = allFlights.map(element => {
   return {flight:element, link:url1+"/flights/"+element}
   }  
-  );
-
-  
-  
+  );  
   console.log(allflightsWithLinks);
     res.status(200).render('pages/seat-select', {flights:allflightsWithLinks});
 }
+const renderConfirmed = (req, res) => 
+{
+    res.status(200).render('pages/confirmed');
+}
+
+const postConfirmedFlight = (req, res) => 
+{ 
+    console.log(req.body);
+
+    res.status(201).send(201, {confirmed_data:req.body});
+
+    //.render('pages/confirmed');
+}
+
+
+
 
 const returnAllFlights = (req, res) => 
 {
@@ -95,6 +106,8 @@ express()
   .get('/flights/:flightNumber', handleFlight)
   .get('/seat-select', renderSeatSelect)
   .get('/all-flights', returnAllFlights)
+  .get('/confirmed', renderConfirmed)
+  .post('/postConfirmedFlight', postConfirmedFlight)
 
   .use((req, res) => res.send('Not Found'))
   .listen(PORT, () => console.log(`Listening on port ${PORT}`));

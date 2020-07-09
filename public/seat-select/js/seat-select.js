@@ -6,6 +6,8 @@ let flightbuttons = [];
 let flights =[]
 let current_seats = [];
 let current_flight_to_display = [];
+let confirmed_flight_info;
+let selection = '';
 
 function loadUpFlightButtons()
 {
@@ -31,10 +33,19 @@ function loadUpFlightButtons()
 
 loadUpFlightButtons();
 
-let selection = '';
 
 
+function postConfirmedData()
+{
+  let data = {element: "barium"};
 
+fetch("/postConfirmedFlight", {
+  method: "POST", 
+  body: JSON.stringify(data)
+}).then(res => {
+  console.log("Request complete! response:", res);
+});
+}
 
 const renderSeats = () => {
   document.querySelector('.form-container').style.display = 'block';
@@ -104,17 +115,26 @@ const toggleFormContent = (event) => {
 
 const handleConfirmSeat = (event) => {
   event.preventDefault();
+
+
+
+  
   // TODO: everything in here!
-  fetch('/users', {
+  fetch('/postConfirmedFlight', {
     method: 'POST',
     body: JSON.stringify({
       givenName: document.getElementById('givenName').value,
+      surname: document.getElementById('surname').value,
+      email: document.getElementById('email').value,
+      selection: selection
     }),
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-  });
+  })
+  .then((res) => res.json())
+  .then((data) => console.log(data))
 };
 
 function flightClicked()
