@@ -4,10 +4,9 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 let { flights } = require('./test-data/flightSeating');
-
 let confirmed_booking = [];
 
-const PORT = process.env.PORT || 8000;
+const { v4: uuidv4 } = require('uuid');const PORT = process.env.PORT || 8000;
 let url = require('url');
 
 
@@ -56,25 +55,40 @@ const renderSeatSelect = (req, res) =>
 }
 const renderConfirmed = (req, res) => 
 {
+
+  // let url1 = getFormattedUrl(req);
+
   console.log("renderConfirmed");
-    res.status(200).render('pages/confirmed');
+  // console.log(url1);
+  // console.log(req.params);
+
+
+    res.status(200).render('pages/confirmed', {confirmedDetails: req.params});
 }
 
 const postConfirmedFlight = (req, res) => 
 { 
-    console.log(req.body);
-    let confirmed = req.body;
+    let confirmed = {
+    givenName: req.body.givenName,
+    surname: req.body.surname,
+    email: req.body.email,
+    selection: req.body.selection,
+    flightnumber: req.body.flightnumber,}
+
+    let new_uuid = uuidv4();
+    console.log(new_uuid);
+
 
     confirmed_booking.push(confirmed);
-    
-    res.status(201).send({confirmed_data:req.body})
+  
+    console.log("put into confirmed booking DB:");
+    console.log(confirmed_booking[confirmed_booking.length -1 ]);
+
+    res.status(201).send({confirmed_data:confirmed_booking[confirmed_booking.length -1 ]})
 
 
     //.render('pages/confirmed');
 }
-
-
-
 
 const returnAllFlights = (req, res) => 
 {
@@ -82,8 +96,6 @@ const returnAllFlights = (req, res) =>
 
     res.status(200).send({allFlights:allFlights});
 }
-
-
 
 function getFormattedUrl(req) {
   return url.format({
@@ -111,7 +123,7 @@ express()
   .get('/flights/:flightNumber', handleFlight)
   .get('/seat-select', renderSeatSelect)
   .get('/all-flights', returnAllFlights)
-  .get('/confirmed/:email/:givename/:selection/:surname', renderConfirmed)
+  .get('/confirmed/:email/:givename/:selection/:surname/:flightnumber',renderConfirmed)
   .post('/postConfirmedFlight', postConfirmedFlight)
 
   .use((req, res) => res.send('Not Found'))

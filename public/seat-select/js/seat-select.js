@@ -100,14 +100,17 @@ const toggleFormContent = (event) => {
 
 const handleConfirmSeat = (event) => {
   event.preventDefault();
+  console.log("hellllo");
 
+  console.log(current_flight_to_display);
   fetch('/postConfirmedFlight', {
     method: 'POST',
     body: JSON.stringify({
       givenName: document.getElementById('givenName').value,
       surname: document.getElementById('surname').value,
       email: document.getElementById('email').value,
-      selection: selection
+      selection: selection,
+      flightnumber: current_flight_to_display
     }),
     headers: {
       Accept: 'application/json',
@@ -115,16 +118,22 @@ const handleConfirmSeat = (event) => {
     },
   })
   .then((res) => res.json())
+  
   .then((data) => {
 
+  console.log("gto back from DB:")
+  console.log(data);
   let email_response = data.confirmed_data.email;
   let givenName_response = data.confirmed_data.givenName;
   let selection_response = data.confirmed_data.selection;
   let surname_response = data.confirmed_data.surname;
+  let flightnumber_response =  data.confirmed_data.flightnumber;
 
-    console.log(window.location.host)
+    console.log(window.location.host);
 
-    let host_area = "http://"+window.location.host+`/confirmed/${email_response}/${givenName_response}/${selection_response}/${surname_response}/`;
+    let host_area = "http://"+window.location.host+`/confirmed/${email_response}/${givenName_response}/${selection_response}/${surname_response}/${flightnumber_response}`;
+
+
   window.location.assign(host_area);
   // fetch(`/confirmed/${email_response}/${givenName_response}/${selection_response}/${surname_response}/`)
   
