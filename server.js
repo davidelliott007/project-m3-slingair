@@ -53,6 +53,30 @@ const renderSeatSelect = (req, res) =>
   console.log(allflightsWithLinks);
     res.status(200).render('pages/seat-select', {flights:allflightsWithLinks});
 }
+const renderConfirmedWithUUID = (req, res) => 
+{
+
+  // let url1 = getFormattedUrl(req);
+
+  console.log("renderConfirmed");
+  // console.log(url1);
+   console.log(req.params);
+
+   let found = confirmed_booking.find(element => element.uuid === req.params.uuid);
+
+   console.log(found);
+   
+   if (found === undefined)
+   {
+    res.status(404).send('Sorry!  Flight booking cannot be found in our database');
+   }
+   else
+   {
+    res.status(200).render('pages/confirmed', {confirmedDetails: found});
+   }
+  
+}
+
 const renderConfirmed = (req, res) => 
 {
 
@@ -66,17 +90,20 @@ const renderConfirmed = (req, res) =>
     res.status(200).render('pages/confirmed', {confirmedDetails: req.params});
 }
 
+
 const postConfirmedFlight = (req, res) => 
 { 
+  let new_uuid = uuidv4();
+  console.log(new_uuid);
+
     let confirmed = {
     givenName: req.body.givenName,
     surname: req.body.surname,
     email: req.body.email,
     selection: req.body.selection,
-    flightnumber: req.body.flightnumber,}
+    flightnumber: req.body.flightnumber,
+    uuid: new_uuid}
 
-    let new_uuid = uuidv4();
-    console.log(new_uuid);
 
 
     confirmed_booking.push(confirmed);
@@ -84,7 +111,9 @@ const postConfirmedFlight = (req, res) =>
     console.log("put into confirmed booking DB:");
     console.log(confirmed_booking[confirmed_booking.length -1 ]);
 
-    res.status(201).send({confirmed_data:confirmed_booking[confirmed_booking.length -1 ]})
+    // res.status(201).send({confirmed_data:confirmed_booking[confirmed_booking.length -1 ]})
+
+    res.status(201).send({confirmed_data:confirmed_booking[confirmed_booking.length -1 ].uuid})
 
 
     //.render('pages/confirmed');
@@ -123,8 +152,10 @@ express()
   .get('/flights/:flightNumber', handleFlight)
   .get('/seat-select', renderSeatSelect)
   .get('/all-flights', returnAllFlights)
-  .get('/confirmed/:email/:givename/:selection/:surname/:flightnumber',renderConfirmed)
+  .get('/confirmed/:uuid',renderConfirmedWithUUID)
   .post('/postConfirmedFlight', postConfirmedFlight)
 
   .use((req, res) => res.send('Not Found'))
   .listen(PORT, () => console.log(`Listening on port ${PORT}`));
+  
+  // .get('/confirmed/:email/:givename/:selection/:surname/:flightnumber',renderConfirmed)

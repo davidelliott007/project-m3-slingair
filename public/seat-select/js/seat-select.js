@@ -121,17 +121,22 @@ const handleConfirmSeat = (event) => {
   
   .then((data) => {
 
-  console.log("gto back from DB:")
-  console.log(data);
-  let email_response = data.confirmed_data.email;
-  let givenName_response = data.confirmed_data.givenName;
-  let selection_response = data.confirmed_data.selection;
-  let surname_response = data.confirmed_data.surname;
-  let flightnumber_response =  data.confirmed_data.flightnumber;
+  console.log("got back from DB:")
+  console.log(data.confirmed_data);
 
-    console.log(window.location.host);
+    let uuid = data.confirmed_data;
 
-    let host_area = "http://"+window.location.host+`/confirmed/${email_response}/${givenName_response}/${selection_response}/${surname_response}/${flightnumber_response}`;
+    let host_area = "http://"+window.location.host+`/confirmed/${uuid}`;
+
+  // let email_response = data.confirmed_data.email;
+  // let givenName_response = data.confirmed_data.givenName;
+  // let selection_response = data.confirmed_data.selection;
+  // let surname_response = data.confirmed_data.surname;
+  // let flightnumber_response =  data.confirmed_data.flightnumber;
+
+  //   console.log(window.location.host);
+
+    // let host_area = "http://"+window.location.host+`/confirmed/${email_response}/${givenName_response}/${selection_response}/${surname_response}/${flightnumber_response}`;
 
 
   window.location.assign(host_area);
