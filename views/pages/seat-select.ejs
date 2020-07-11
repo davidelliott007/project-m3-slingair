@@ -20,12 +20,13 @@
                     <button id ="dave" class="dropbtn">FLIGHT NUMBER</button>
                     <div id="myDropdown" class="dropdown-content">
 
-
                         <% flights.forEach((flight, i) => { %>
+                            <p>
+
                             <button id =<%= flight.flight %> class="flightButton"><%= flight.flight %></button>
+                        </p>
 
                         <% }); %> 
-                    
                     </div>
                   </div>
                   
